@@ -22,7 +22,11 @@ st1= ', '.join(some_list)
 print (st1)
 
 
-some_list = [1,2,3,4,5,6,7]
+some_list = range(10)
 st1 = ",".join([str(i) for i in some_list])
 print (st1)
 
+
+replacable ="trancendental hibernational nation"
+st1 = replacable.replace("nation","natty")
+print (st1)
