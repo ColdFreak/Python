@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+=======
+#!/usr/bin/python3
+>>>>>>> bf4f5e0942f6cd0bfd4e3d629fb0e59d2c24c19c
 import random
 HANGMANPICS = ['''
 
@@ -144,4 +148,8 @@ while True:
             gameIsDone = False
             secretWord = getRandomWord(words)
         else:
+<<<<<<< HEAD
             break
+=======
+            break
+>>>>>>> bf4f5e0942f6cd0bfd4e3d629fb0e59d2c24c19c
