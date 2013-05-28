@@ -14,9 +14,12 @@ else:
 		infile = open(sys.argv[3])
 	if nargs > 4:
 		outfile = open(sys.argv[4], 'w')
-	for s in infile:
-		outfile.write(s.replace(stext, rtext))
-	outfile.close()
-	infile.close()
+	try:
+		for s in infile:
+			outfile.write(s.replace(stext, rtext))
+	finally:
+		outfile.close()
+		infile.close()
 	
+
 		
