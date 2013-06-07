@@ -12,6 +12,8 @@ class LinksParser(HTMLParser.HTMLParser):
 	def handle_starttag(self, tag, attributes):
 		if tag != 'span':
 			return
+		if attributes == None:
+			return
 		if self.recording:
 			self.recording += 1
 			return
@@ -31,9 +33,12 @@ class LinksParser(HTMLParser.HTMLParser):
 			self.data.append(data)
 
 parser = LinksParser()
-f = urllib2.urlopen("http://dict.hjenglish.com/w/deception")
+f = urllib2.urlopen("http://dict.hjenglish.com/w/enter")
 html = f.read()
 parser.feed(html)
-print parser.data
+#for i in parser.data:
+#	print i
+print parser.data[0]
+
 parser.close()
 
