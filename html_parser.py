@@ -1,24 +1,23 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
-import HTMLParser
-import urllib2
+import sys
+from html.parser import HTMLParser
+from urllib.request import urlopen
 
-class LinksParser(HTMLParser.HTMLParser):
+class LinksParser(HTMLParser):
 	def __init__(self):
-		HTMLParser.HTMLParser.__init__(self)
+		HTMLParser.__init__(self)
 		self.recording = 0
 		self.data = []
 
 	def handle_starttag(self, tag, attributes):
 		if tag != 'span':
 			return
-		if attributes == None:
-			return
 		if self.recording:
 			self.recording += 1
 			return
 		for name, value in attributes:
-			if name == 'class' and value == 'trs':
+			if name == 'class' and value == 'phonetic':
 				break
 			else:
 				return
@@ -32,13 +31,15 @@ class LinksParser(HTMLParser.HTMLParser):
 		if self.recording:
 			self.data.append(data)
 
+word_url = "http://dict.cn/"+sys.argv[1]
 parser = LinksParser()
-f = urllib2.urlopen("http://dict.hjenglish.com/w/enter")
+f = urlopen(word_url)
 html = f.read()
+html = html.decode('UTF-8')
 parser.feed(html)
 #for i in parser.data:
 #	print i
-print parser.data[0]
+print (sys.argv[1], parser.data[1])
 
 parser.close()
 
