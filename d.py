@@ -68,7 +68,15 @@ for match in word_meanings:
 process = subprocess.Popen(['play', mp3_name], stdout=dev_null, stderr=dev_null)
 retcode = process.wait()
 
-add_word = input("Want to add this word to database? ")
+try:
+	add_word = input("Want to add this word to database? ")
+except EOFError:
+	print ("\n")
+	sys.exit(0)
+except KeyboardInterrupt:
+	print ("\n")
+	sys.exit(0)
+
 if add_word == "y" or add_word == "yes":
 	print ("Add this word to database")
 else:
