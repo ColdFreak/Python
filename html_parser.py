@@ -68,5 +68,10 @@ for match in word_meanings:
 process = subprocess.Popen(['play', mp3_name], stdout=dev_null, stderr=dev_null)
 retcode = process.wait()
 
+add_word = input("Want to add this word to database? ")
+if add_word == "y" or add_word == "yes":
+	print ("Add this word to database")
+else:
+	print ("OK, just forget about it")
 parser.close()
 
