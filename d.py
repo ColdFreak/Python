@@ -1,10 +1,9 @@
 #!/usr/bin/python3
 
-import sys
+import sys, os, re, errno
 from html.parser import HTMLParser
 from urllib.request import urlopen
 import subprocess
-import re
 
 class LinksParser(HTMLParser):
 	def __init__(self):
@@ -33,16 +32,41 @@ class LinksParser(HTMLParser):
 		if self.recording:
 			self.data.append(data)
 
+
+def mkdir_p(path):
+	try:
+		os.makedirs(path)
+	except OSError as exc: # Python > 2.5
+		if exc.errno == errno.EEXIST and os.path.isdir(path):
+			pass
+		else:
+		 	raise
+
+# url to download the word
 word_url = "http://dict.cn/"+sys.argv[1]
+
+#url to download the mp3 file
 audio_url = "http://tts.yeshj.com/uk/s/"+sys.argv[1]
+
+# redirect stdout to /dev/null when play the mp3 file
 dev_null = open('/dev/null', 'w')
 
-# download mp3 file to /tmp
-mp3file = urlopen(audio_url)
-mp3_name = "/tmp/"+sys.argv[1]+".mp3"
-output_mp3 = open(mp3_name, 'wb')
-output_mp3.write(mp3file.read())
-output_mp3.close()
+# make directory to store mp3 files
+words_dir =os.environ['HOME']+"/words_mp3/"
+mkdir_p(words_dir)
+mp3_name = words_dir+sys.argv[1]+".mp3"
+
+if os.path.exists(mp3_name):
+	process = subprocess.Popen(['play', mp3_name], stdout=dev_null, stderr=dev_null)
+	retcode = process.wait()
+else:
+	# download mp3 file to $HOME/words_mp3
+	mp3file = urlopen(audio_url)
+	output_mp3 = open(mp3_name, 'wb')
+	output_mp3.write(mp3file.read())
+	output_mp3.close()
+	process = subprocess.Popen(['play', mp3_name], stdout=dev_null, stderr=dev_null)
+	retcode = process.wait()
 
 # extract pronounciation 
 parser = LinksParser()
@@ -51,7 +75,6 @@ html = f.read()
 html = html.decode('UTF-8')
 parser.feed(html)
 
-# 
 word_meanings = re.findall('</span><strong>(.*)</strong></li>',html, re.MULTILINE)
 
 
@@ -65,11 +88,9 @@ for match in word_meanings:
 	print (match)
 
 # play mp3 file and redirect stdout to /dev/null then wait process to complete
-process = subprocess.Popen(['play', mp3_name], stdout=dev_null, stderr=dev_null)
-retcode = process.wait()
 
 try:
-	add_word = input("Want to add this word to database? ")
+	add_word = input("Add this? ")
 except EOFError:
 	print ("\n")
 	sys.exit(0)
@@ -80,6 +101,7 @@ except KeyboardInterrupt:
 if add_word == "y" or add_word == "yes":
 	print ("Add this word to database")
 else:
+	os.remove(mp3_name)
 	print ("OK, just forget about it")
 parser.close()
 
